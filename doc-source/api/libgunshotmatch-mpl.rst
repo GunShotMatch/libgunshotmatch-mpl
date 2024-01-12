@@ -1,5 +1,5 @@
-====================
-libgunshotmatch_mpl
-====================
+========================================
+:mod:`libgunshotmatch_mpl`
+========================================
 
 .. automodule:: libgunshotmatch_mpl
