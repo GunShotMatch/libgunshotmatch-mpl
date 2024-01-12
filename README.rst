@@ -19,10 +19,8 @@ libgunshotmatch-mpl
 	  - |docs| |docs_check|
 	* - Tests
 	  - |actions_linux| |actions_windows| |actions_macos| |coveralls|
-	* - PyPI
-	  - |pypi-version| |supported-versions| |supported-implementations| |wheel|
 	* - Activity
-	  - |commits-latest| |commits-since| |maintained| |pypi-downloads|
+	  - |commits-latest| |commits-since| |maintained|
 	* - QA
 	  - |codefactor| |actions_flake8| |actions_mypy|
 	* - Other
@@ -68,22 +66,6 @@ libgunshotmatch-mpl
 	:target: https://www.codefactor.io/repository/github/GunShotMatch/libgunshotmatch-mpl
 	:alt: CodeFactor Grade
 
-.. |pypi-version| image:: https://img.shields.io/pypi/v/libgunshotmatch-mpl
-	:target: https://pypi.org/project/libgunshotmatch-mpl/
-	:alt: PyPI - Package Version
-
-.. |supported-versions| image:: https://img.shields.io/pypi/pyversions/libgunshotmatch-mpl?logo=python&logoColor=white
-	:target: https://pypi.org/project/libgunshotmatch-mpl/
-	:alt: PyPI - Supported Python Versions
-
-.. |supported-implementations| image:: https://img.shields.io/pypi/implementation/libgunshotmatch-mpl
-	:target: https://pypi.org/project/libgunshotmatch-mpl/
-	:alt: PyPI - Supported Implementations
-
-.. |wheel| image:: https://img.shields.io/pypi/wheel/libgunshotmatch-mpl
-	:target: https://pypi.org/project/libgunshotmatch-mpl/
-	:alt: PyPI - Wheel
-
 .. |license| image:: https://img.shields.io/github/license/GunShotMatch/libgunshotmatch-mpl
 	:target: https://github.com/GunShotMatch/libgunshotmatch-mpl/blob/master/LICENSE
 	:alt: License
@@ -102,10 +84,6 @@ libgunshotmatch-mpl
 .. |maintained| image:: https://img.shields.io/maintenance/yes/2024
 	:alt: Maintenance
 
-.. |pypi-downloads| image:: https://img.shields.io/pypi/dm/libgunshotmatch-mpl
-	:target: https://pypi.org/project/libgunshotmatch-mpl/
-	:alt: PyPI - Downloads
-
 .. end shields
 
 Installation
@@ -113,12 +91,12 @@ Installation
 
 .. start installation
 
-``libgunshotmatch-mpl`` can be installed from PyPI.
+``libgunshotmatch-mpl`` can be installed from GitHub.
 
 To install with ``pip``:
 
 .. code-block:: bash
 
-	$ python -m pip install libgunshotmatch-mpl
+	$ python -m pip install git+https://github.com/GunShotMatch/libgunshotmatch-mpl
 
 .. end installation

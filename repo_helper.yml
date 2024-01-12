@@ -12,6 +12,7 @@ short_desc: 'Matplotlib intergration for GunShotMatch.'
 
 enable_conda: false
 use_whey: true
+on_pypi: false
 
 python_versions:
  3.8:
