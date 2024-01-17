@@ -20,7 +20,7 @@ libgunshotmatch-mpl
 		* - Docs
 		  - |docs| |docs_check|
 		* - Tests
-		  - |actions_linux| |actions_windows| |actions_macos| |coveralls|
+		  - |actions_linux| |actions_windows| |actions_macos|
 		* - Activity
 		  - |commits-latest| |commits-since| |maintained|
 		* - QA
@@ -59,9 +59,6 @@ libgunshotmatch-mpl
 	.. |requires| image:: https://dependency-dash.repo-helper.uk/github/GunShotMatch/libgunshotmatch-mpl/badge.svg
 		:target: https://dependency-dash.repo-helper.uk/github/GunShotMatch/libgunshotmatch-mpl/
 		:alt: Requirements Status
-
-	.. |coveralls| coveralls-shield::
-		:alt: Coverage
 
 	.. |codefactor| codefactor-shield::
 		:alt: CodeFactor Grade
