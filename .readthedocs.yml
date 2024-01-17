@@ -19,3 +19,4 @@ build:
   jobs:
     post_create_environment:
      - pip install .
+     - pip install sphinx==3.5.4
