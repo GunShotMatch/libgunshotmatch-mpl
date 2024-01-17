@@ -123,6 +123,6 @@ def draw_peaks(project: Project, peak_idx: int, figure: Figure, axes: List[Axes]
 		ax.annotate(repeat_name, (0.01, 0.8), xycoords="axes fraction")
 
 	axes[0].set_xlim(min_rt / 60, max_rt / 60)
-	# figure.subplots_adjust(bottom=0, top=1, left=0, right=1, hspace=0, wspace=0)
-	# figure.subplots_adjust(top=0.95, right=0.95)
-	figure.subplots_adjust(bottom=0.1, left=0.1, top=0.95, right=0.98, hspace=0.3)
+	# # figure.subplots_adjust(bottom=0, top=1, left=0, right=1, hspace=0, wspace=0)
+	# # figure.subplots_adjust(top=0.95, right=0.95)
+	# figure.subplots_adjust(bottom=0.1, left=0.1, top=0.95, right=0.98, hspace=0.3)
