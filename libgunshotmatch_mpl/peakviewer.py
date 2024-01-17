@@ -33,8 +33,11 @@ from typing import List
 # 3rd party
 from domdf_python_tools.paths import PathLike
 from libgunshotmatch.project import Project
-from matplotlib.axes import Axes
-from matplotlib.figure import Figure
+from matplotlib.axes import Axes  # type: ignore[import]
+from matplotlib.figure import Figure  # type: ignore[import]
+
+# this package
+from libgunshotmatch_mpl.chromatogram import draw_peak_vlines
 
 __all__ = ("UnsupportedProject", "draw_peaks", "load_project")
 
@@ -103,19 +106,13 @@ def draw_peaks(project: Project, peak_idx: int, figure: Figure, axes: List[Axes]
 				intensity_list.append(intensity)
 
 		axes[repeat_idx].plot(time_list, intensity_list)
-		# axes[repeat_idx].vlines([peak.rt], 0, peak.area, colors="red")
-		axes[repeat_idx].vlines(
-				[peak.rt / 60],
-				0,
-				intensity_list[time_list.index(peak.rt / 60)],
-				colors="red",
-				)
+		draw_peak_vlines(axes[repeat_idx], peak.rt / 60, intensity_list[time_list.index(peak.rt / 60)])
 		axes[repeat_idx].text(
 				peak.rt / 60,
 				axes[repeat_idx].get_ylim()[1] * 0.2,
 				f" {peak.rt/60:0.3f}",
 				)
-	figure.supylabel("Intensity")
+	figure.supylabel("Intensity", fontsize="medium")
 	axes[0].autoscale()
 	axes[-1].set_xlabel("Retention Time (mins)")
 	for ax, repeat_name in zip(axes, project.datafile_data):
@@ -124,6 +121,7 @@ def draw_peaks(project: Project, peak_idx: int, figure: Figure, axes: List[Axes]
 		# xmin, xmax = ax.get_xlim()
 		# ax.text(xmin + (xmax-xmin)*0.05, ax.get_ylim()[1] *0.8, repeat_name)
 		ax.annotate(repeat_name, (0.01, 0.8), xycoords="axes fraction")
+
 	axes[0].set_xlim(min_rt / 60, max_rt / 60)
 	# figure.subplots_adjust(bottom=0, top=1, left=0, right=1, hspace=0, wspace=0)
 	# figure.subplots_adjust(top=0.95, right=0.95)
