@@ -33,6 +33,7 @@ from typing import List, Optional, Union
 # 3rd party
 import matplotlib.transforms  # type: ignore[import]
 from libgunshotmatch.project import Project
+from libgunshotmatch.utils import get_rt_range
 from matplotlib.axes import Axes  # type: ignore[import]
 from matplotlib.figure import Figure  # type: ignore[import]
 from matplotlib.ticker import ScalarFormatter  # type: ignore[import]
@@ -227,17 +228,7 @@ def draw_combined_chromatogram(
 
 	assert project.consolidated_peaks is not None
 
-	# Get RT extremes from intensity matrix
-	min_rts, max_rts = [], []
-	for repeat in project.datafile_data.values():
-		assert repeat.datafile.intensity_matrix is not None
-		times = repeat.datafile.intensity_matrix.time_list
-		min_rts.append(times[0])
-		max_rts.append(times[-1])
-
-	min_rt = min(min_rts) / 60
-	max_rt = max(max_rts) / 60
-	# min_rt, max_rt = get_rt_range(project)
+	min_rt, max_rt = get_rt_range(project)
 
 	peaks = project.consolidated_peaks
 
@@ -265,6 +256,4 @@ def draw_combined_chromatogram(
 	ax.set_xlabel("Retention Time (mins)")
 	figure.suptitle(project.name)
 
-	custom_formatter = OneDPScalarFormatter(useMathText=True)
-	ax.yaxis.set_major_formatter(custom_formatter)
-	ax.yaxis.major.formatter.set_powerlimits((0, 0))
+	ylabel_sci_1dp(ax)
