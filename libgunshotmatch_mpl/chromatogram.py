@@ -27,6 +27,7 @@ Common chromatogram drawing functionality.
 #
 
 # stdlib
+from operator import attrgetter
 from typing import List, Optional, Union
 
 # 3rd party
@@ -40,6 +41,7 @@ __all__ = (
 		"OneDPScalarFormatter",
 		"add_repeat_name",
 		"draw_chromatograms",
+		"draw_combined_chromatogram",
 		"draw_peak_arrows",
 		"draw_peak_vlines",
 		"ylabel_sci_1dp",
@@ -199,3 +201,70 @@ def draw_chromatograms(project: Project, figure: Figure, axes: List[Axes]) -> No
 	figure.supylabel("Intensity", fontsize="medium")
 	axes[-1].set_xlabel("Retention Time (mins)")
 	figure.suptitle(project.name)
+
+
+def draw_combined_chromatogram(
+		project: Project,
+		figure: Figure,
+		ax: Axes,
+		*,
+		top_n_peaks: Optional[int] = None,
+		minimum_area: float = 0,
+		) -> None:
+	"""
+	Draw a combined "chromatogram" for the project.
+
+	:param project:
+	:param figure:
+	:param ax:
+	:param top_n_peaks: Show only the n largest peaks.
+	:param minimum_area: Show only peaks larger than the given area.
+
+	:rtype:
+
+	.. versionadded:: 0.2.0
+	"""
+
+	assert project.consolidated_peaks is not None
+
+	# Get RT extremes from intensity matrix
+	min_rts, max_rts = [], []
+	for repeat in project.datafile_data.values():
+		assert repeat.datafile.intensity_matrix is not None
+		times = repeat.datafile.intensity_matrix.time_list
+		min_rts.append(times[0])
+		max_rts.append(times[-1])
+
+	min_rt = min(min_rts) / 60
+	max_rt = max(max_rts) / 60
+	# min_rt, max_rt = get_rt_range(project)
+
+	peaks = project.consolidated_peaks
+
+	if top_n_peaks:
+		# Sort by peak area and take largest ``top_n_peaks``
+		peaks = sorted(project.consolidated_peaks, key=attrgetter("area"), reverse=True)[:top_n_peaks]
+
+		# Resort by retention time
+		peaks.sort(key=attrgetter("rt"))
+
+	for peak in peaks:
+		if peak.area < minimum_area:
+			continue
+
+		ax.bar(peak.rt / 60, peak.area, width=0.2)
+		bar = ax.errorbar(peak.rt / 60, peak.area, peak.area_stdev, color="darkgrey", capsize=5, clip_on=False)
+		for b in bar[1]:
+			b.set_clip_on(False)
+
+	# ylabel_use_sci(ax)
+	ax.set_xlim(min_rt, max_rt)
+	ax.set_ylim(bottom=0)
+
+	figure.supylabel("Intensity", fontsize="medium")
+	ax.set_xlabel("Retention Time (mins)")
+	figure.suptitle(project.name)
+
+	custom_formatter = OneDPScalarFormatter(useMathText=True)
+	ax.yaxis.set_major_formatter(custom_formatter)
+	ax.yaxis.major.formatter.set_powerlimits((0, 0))
