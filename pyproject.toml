@@ -4,7 +4,7 @@ build-backend = "whey"
 
 [project]
 name = "libgunshotmatch-mpl"
-version = "0.1.0.post1"
+version = "0.2.0"
 description = "Matplotlib intergration for GunShotMatch."
 readme = "README.rst"
 keywords = []
