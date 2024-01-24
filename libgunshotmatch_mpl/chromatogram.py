@@ -34,8 +34,17 @@ import matplotlib.transforms  # type: ignore[import]
 from libgunshotmatch.project import Project
 from matplotlib.axes import Axes  # type: ignore[import]
 from matplotlib.figure import Figure  # type: ignore[import]
+from matplotlib.ticker import ScalarFormatter  # type: ignore[import]
 
-__all__ = ("add_repeat_name", "draw_chromatograms", "draw_peak_arrows", "draw_peak_vlines", "ylabel_use_sci")
+__all__ = (
+		"OneDPScalarFormatter",
+		"add_repeat_name",
+		"draw_chromatograms",
+		"draw_peak_arrows",
+		"draw_peak_vlines",
+		"ylabel_sci_1dp",
+		"ylabel_use_sci"
+		)
 
 
 def draw_peak_arrows(
@@ -98,6 +107,33 @@ def ylabel_use_sci(axes: Axes) -> None:
 	"""
 
 	axes.ticklabel_format(axis='y', scilimits=(0, 0), useMathText=True)
+
+
+class OneDPScalarFormatter(ScalarFormatter):
+	"""
+	Customised ``ScalarFormatter`` to always show one decimal place.
+
+	.. versionadded:: 0.2.0
+	"""
+
+	def _set_format(self) -> None:
+		self.format = "%.1f"  # Show 1 dp
+
+
+def ylabel_sci_1dp(axes: Axes) -> None:
+	"""
+	Set matplotlib axes to use scientific notation (with math text and one decimal place).
+
+	:param axes:
+
+	:rtype:
+
+	.. versionadded:: 0.2.0
+	"""
+
+	custom_formatter = OneDPScalarFormatter(useMathText=True)
+	axes.yaxis.set_major_formatter(custom_formatter)
+	axes.yaxis.major.formatter.set_powerlimits((0, 0))
 
 
 def add_repeat_name(axes: Axes, repeat_name: str) -> None:
