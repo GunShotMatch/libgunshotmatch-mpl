@@ -37,6 +37,7 @@ from libgunshotmatch.utils import get_rt_range
 from matplotlib.axes import Axes  # type: ignore[import]
 from matplotlib.figure import Figure  # type: ignore[import]
 from matplotlib.ticker import ScalarFormatter  # type: ignore[import]
+from matplotlib.ticker import AutoMinorLocator
 
 __all__ = (
 		"OneDPScalarFormatter",
@@ -195,7 +196,7 @@ def draw_chromatograms(project: Project, figure: Figure, axes: List[Axes]) -> No
 		ax.xaxis.set_tick_params(which="both", labelbottom=True)
 		# ax.set_ylim([0, ax.get_ylim()[1]*1.2])
 		ax.set_ylim([ax.get_ylim()[0] * 0.5, ax.get_ylim()[1] * 1.2])
-
+		ax.xaxis.set_minor_locator(AutoMinorLocator())
 		ylabel_use_sci(ax)
 		add_repeat_name(ax, repeat_name)
 
@@ -249,11 +250,12 @@ def draw_combined_chromatogram(
 			b.set_clip_on(False)
 
 	# ylabel_use_sci(ax)
-	ax.set_xlim(min_rt, max_rt)
 	ax.set_ylim(bottom=0)
-
-	figure.supylabel("Intensity", fontsize="medium")
-	ax.set_xlabel("Retention Time (mins)")
-	figure.suptitle(project.name)
-
 	ylabel_sci_1dp(ax)
+	figure.supylabel("Intensity", fontsize="medium")
+
+	ax.set_xlim(min_rt, max_rt)
+	ax.set_xlabel("Retention Time (mins)")
+	ax.xaxis.set_minor_locator(AutoMinorLocator())
+
+	figure.suptitle(project.name)
