@@ -27,11 +27,12 @@ Common chromatogram drawing functionality.
 #
 
 # stdlib
-from operator import attrgetter
+from operator import attrgetter, itemgetter
 from typing import List, Optional, Union
 
 # 3rd party
 import matplotlib.transforms  # type: ignore[import]
+import textalloc  # type: ignore[import]
 from libgunshotmatch.project import Project
 from libgunshotmatch.utils import get_rt_range
 from matplotlib.axes import Axes  # type: ignore[import]
@@ -48,6 +49,7 @@ __all__ = (
 		"draw_peak_vlines",
 		"ylabel_sci_1dp",
 		"ylabel_use_sci"
+		"annotate_peaks"
 		)
 
 
@@ -244,8 +246,11 @@ def draw_combined_chromatogram(
 		if peak.area < minimum_area:
 			continue
 
-		ax.bar(peak.rt / 60, peak.area, width=0.2)
-		bar = ax.errorbar(peak.rt / 60, peak.area, peak.area_stdev, color="darkgrey", capsize=5, clip_on=False)
+		rt = peak.rt / 60
+		area = peak.area
+		ax.bar(rt, area, width=0.2)
+		bar = ax.errorbar(rt, area, peak.area_stdev, color="darkgrey", capsize=5, clip_on=False)
+
 		for b in bar[1]:
 			b.set_clip_on(False)
 
@@ -259,3 +264,63 @@ def draw_combined_chromatogram(
 	ax.xaxis.set_minor_locator(AutoMinorLocator())
 
 	figure.suptitle(project.name)
+
+
+def annotate_peaks(
+		project: Project,
+		figure: Figure,
+		ax: Axes,
+		*,
+		top_n_peaks: Optional[int] = None,
+		minimum_area: float = 0,
+		) -> None:
+	"""
+	Annotate largest peaks with compound names.
+
+	:param project:
+	:param figure:
+	:param ax:
+	:param top_n_peaks: Show only the n largest peaks.
+	:param minimum_area: Show only peaks larger than the given area.
+
+	:rtype:
+
+	.. versionadded:: 0.4.0
+	"""
+
+	assert project.consolidated_peaks is not None
+
+	labels = []
+
+	for peak in project.consolidated_peaks:
+		if peak.area < minimum_area:
+			continue
+
+		labels.append((peak.rt / 60, peak.area, peak.hits[0].name))
+
+	labels = sorted(labels, key=itemgetter(1), reverse=True)
+
+	x, y, text, = [], [], []
+	for rt, area, name in labels[:top_n_peaks]:
+		x.append(rt)
+		y.append(area)
+		text.append(name.strip())
+
+	x_lines, y_lines = [(0.0, rt)], [(0.0, 0.0)]
+	for rt, area, name in labels:
+		x_lines.append((rt, rt))
+		y_lines.append((0.0, area))
+
+	textalloc.allocate_text(
+			figure,
+			ax,
+			x,
+			y,
+			text,
+			x_scatter=x,
+			y_scatter=y,
+			x_lines=x_lines,
+			y_lines=y_lines,
+			textsize=10,
+			min_distance=0.02,
+			)
