@@ -39,9 +39,11 @@ known_third_party = [
     "importlib_metadata",
     "libgunshotmatch",
     "matplotlib",
+    "numpy",
     "pytest",
     "pytest_cov",
     "pytest_randomly",
     "pytest_timeout",
+    "textalloc",
 ]
 known_first_party = "libgunshotmatch_mpl"
