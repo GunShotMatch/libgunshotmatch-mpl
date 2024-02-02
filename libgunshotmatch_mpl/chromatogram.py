@@ -32,13 +32,14 @@ from typing import List, Optional, Union
 
 # 3rd party
 import matplotlib.transforms  # type: ignore[import]
+import numpy
 import textalloc  # type: ignore[import]
 from libgunshotmatch.project import Project
 from libgunshotmatch.utils import get_rt_range
 from matplotlib.axes import Axes  # type: ignore[import]
+from matplotlib.container import BarContainer  # type: ignore[import]
 from matplotlib.figure import Figure  # type: ignore[import]
-from matplotlib.ticker import ScalarFormatter  # type: ignore[import]
-from matplotlib.ticker import AutoMinorLocator
+from matplotlib.ticker import AutoMinorLocator, ScalarFormatter  # type: ignore[import]
 
 __all__ = (
 		"OneDPScalarFormatter",
@@ -214,6 +215,9 @@ def draw_combined_chromatogram(
 		*,
 		top_n_peaks: Optional[int] = None,
 		minimum_area: float = 0,
+		use_median: bool = False,
+		use_peak_height: bool = False,
+		show_points: bool = False,
 		) -> None:
 	"""
 	Draw a combined "chromatogram" for the project.
@@ -223,10 +227,14 @@ def draw_combined_chromatogram(
 	:param ax:
 	:param top_n_peaks: Show only the n largest peaks.
 	:param minimum_area: Show only peaks larger than the given area.
+	:param use_median: Show the median and inter-quartile range, rather than the mean and standard deviation.
+	:param use_peak_height: Show the peak height and not the peak area.
+	:param show_points: Show individual retention time / peak area scatter points.
 
 	:rtype:
 
 	.. versionadded:: 0.2.0
+	.. versionchanged:: 0.4.0  Added the ``use_median``, ``use_peak_height`` and ``show_points`` keyword arguments.
 	"""
 
 	assert project.consolidated_peaks is not None
@@ -247,12 +255,30 @@ def draw_combined_chromatogram(
 			continue
 
 		rt = peak.rt / 60
-		area = peak.area
-		ax.bar(rt, area, width=0.2)
-		bar = ax.errorbar(rt, area, peak.area_stdev, color="darkgrey", capsize=5, clip_on=False)
 
-		for b in bar[1]:
-			b.set_clip_on(False)
+		if use_peak_height:
+			areas = [sum(ms.intensity_list) for ms in peak.ms_list]
+		else:
+			areas = peak.area_list
+
+		if use_median:
+			area = numpy.nanmedian(areas)
+			_25th_percentile = numpy.nanpercentile(areas, 25)
+			_75th_percentile = numpy.nanpercentile(areas, 75)
+			errorbar = [[area - _25th_percentile], [_75th_percentile - area]]
+		else:
+			area = numpy.nanmean(areas)
+			errorbar = numpy.nanstd(areas)
+
+		bar: BarContainer = ax.bar(rt, area, width=0.2)
+		if show_points:
+			bar_colour = bar.patches[0].get_facecolor()  # So they match
+			ax.scatter([rt / 60 for rt in peak.rt_list], areas, s=50, color=bar_colour, marker='x')
+
+		errorbars = ax.errorbar(rt, area, yerr=errorbar, color="darkgrey", capsize=5, clip_on=False)
+
+		# for eb in errorbars[1]:
+		# 	eb.set_clip_on(False)
 
 	# ylabel_use_sci(ax)
 	ax.set_ylim(bottom=0)
