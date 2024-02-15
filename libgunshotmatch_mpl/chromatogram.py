@@ -275,10 +275,11 @@ def draw_combined_chromatogram(
 			bar_colour = bar.patches[0].get_facecolor()  # So they match
 			ax.scatter([rt / 60 for rt in peak.rt_list], areas, s=50, color=bar_colour, marker='x')
 
-		errorbars = ax.errorbar(rt, area, yerr=errorbar, color="darkgrey", capsize=5, clip_on=False)
+		if len(peak) > 1:
+			errorbars = ax.errorbar(rt, area, yerr=errorbar, color="darkgrey", capsize=5, clip_on=False)
 
-		# for eb in errorbars[1]:
-		# 	eb.set_clip_on(False)
+			# for eb in errorbars[1]:
+			# 	eb.set_clip_on(False)
 
 	# ylabel_use_sci(ax)
 	ax.set_ylim(bottom=0)
