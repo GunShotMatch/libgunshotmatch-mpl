@@ -18,7 +18,7 @@ libgunshotmatch-mpl
 	* - Docs
 	  - |docs| |docs_check|
 	* - Tests
-	  - |actions_linux| |actions_windows| |actions_macos|
+	  - |actions_linux| |actions_windows| |actions_macos| |coveralls|
 	* - PyPI
 	  - |pypi-version| |supported-versions| |supported-implementations| |wheel|
 	* - Activity
@@ -59,6 +59,10 @@ libgunshotmatch-mpl
 .. |requires| image:: https://dependency-dash.repo-helper.uk/github/GunShotMatch/libgunshotmatch-mpl/badge.svg
 	:target: https://dependency-dash.repo-helper.uk/github/GunShotMatch/libgunshotmatch-mpl/
 	:alt: Requirements Status
+
+.. |coveralls| image:: https://img.shields.io/coveralls/github/GunShotMatch/libgunshotmatch-mpl/master?logo=coveralls
+	:target: https://coveralls.io/github/GunShotMatch/libgunshotmatch-mpl?branch=master
+	:alt: Coverage
 
 .. |codefactor| image:: https://img.shields.io/codefactor/grade/github/GunShotMatch/libgunshotmatch-mpl?logo=codefactor
 	:target: https://www.codefactor.io/repository/github/GunShotMatch/libgunshotmatch-mpl
