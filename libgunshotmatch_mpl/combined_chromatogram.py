@@ -2,7 +2,7 @@
 #
 #  combined_chromatogram.py
 """
-"Combined" chromatogram drawing functionality.
+Combined "chromatogram" drawing functionality.
 
 A bar chart for peak area/height styled as a chromatogram, with time on the x-axis.
 
@@ -170,7 +170,7 @@ def draw_combined_chromatogram(
 
 	.. versionchanged:: 0.5.0
 
-		* Moved to the ``combined_chromatogram`` module.
+		* Moved to the :mod:`~.combined_chromatogram` module.
 		* Y-axis label now reflects ``use_median`` and ``use_peak_height`` options.
 	"""
 

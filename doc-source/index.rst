@@ -125,6 +125,11 @@ Installation
 
 .. end installation
 
+Contents
+---------------
+
+.. html-section::
+
 .. toctree::
 	:hidden:
 
@@ -135,7 +140,9 @@ Installation
 	:caption: API Reference
 	:glob:
 
-	api/*
+	chromatogram<api/chromatogram>
+	combined_chromatogram<api/combined_chromatogram>
+	peakviewer<api/peakviewer>
 
 .. toctree::
 	:maxdepth: 3
@@ -147,6 +154,7 @@ Installation
 
 .. sidebar-links::
 	:caption: Links
+	:pypi: libgunshotmatch-mpl
 	:github:
 
 

@@ -46,6 +46,7 @@ __all__ = (
 		"OneDPScalarFormatter",
 		"add_repeat_name",
 		"draw_chromatograms",
+		"draw_combined_chromatogram",
 		"draw_peak_arrows",
 		"draw_peak_vlines",
 		"ylabel_sci_1dp",
@@ -146,6 +147,11 @@ def ylabel_sci_1dp(axes: Axes) -> None:
 def add_repeat_name(axes: Axes, repeat_name: str) -> None:
 	"""
 	Add a repeat name label to the top left of the given axes.
+
+	:param axes:
+	:param repeat_name:
+
+	.. latex:clearpage::
 	"""
 
 	axes.annotate(repeat_name, (0.01, 0.8), xycoords="axes fraction")

@@ -54,3 +54,11 @@ github_ci_requirements:
 
 # tox_unmanaged:
 #  - pytest
+
+extra_sphinx_extensions:
+ - sphinx_toolbox.more_autosummary.column_widths
+
+sphinx_conf_epilogue:
+ - nitpicky = True
+ - autosummary_widths_builders = ["latex"]
+ - needspace_amount = r"3\baselineskip"
