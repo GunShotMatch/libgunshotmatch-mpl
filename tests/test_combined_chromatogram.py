@@ -1,13 +1,14 @@
 # 3rd party
 from common import check_images
-from matplotlib import pyplot as plt
+from libgunshotmatch.project import Project
+from matplotlib import pyplot as plt  # type: ignore[import]
 
 # this package
 from libgunshotmatch_mpl.chromatogram import annotate_peaks, draw_combined_chromatogram
 
 
 @check_images
-def test_combined_chromatogram_mean_areas(hymax_project):
+def test_combined_chromatogram_mean_areas(hymax_project: Project):
 
 	fig = plt.figure(layout="constrained", figsize=(11.7, 8.3))
 	ax = fig.subplots(1, 1, sharex=True)
@@ -23,7 +24,7 @@ def test_combined_chromatogram_mean_areas(hymax_project):
 
 
 @check_images
-def test_combined_chromatogram_annotate(hymax_project):
+def test_combined_chromatogram_annotate(hymax_project: Project):
 
 	fig = plt.figure(layout="constrained", figsize=(11.7, 8.3))
 	ax = fig.subplots(1, 1, sharex=True)
@@ -40,7 +41,7 @@ def test_combined_chromatogram_annotate(hymax_project):
 
 
 @check_images
-def test_combined_chromatogram_threshold(hymax_project):
+def test_combined_chromatogram_threshold(hymax_project: Project):
 
 	fig = plt.figure(layout="constrained", figsize=(11.7, 8.3))
 	ax = fig.subplots(1, 1, sharex=True)
@@ -57,7 +58,7 @@ def test_combined_chromatogram_threshold(hymax_project):
 
 
 @check_images
-def test_combined_chromatogram_points(hymax_project):
+def test_combined_chromatogram_points(hymax_project: Project):
 
 	fig = plt.figure(layout="constrained", figsize=(11.7, 8.3))
 	ax = fig.subplots(1, 1, sharex=True)
@@ -74,7 +75,7 @@ def test_combined_chromatogram_points(hymax_project):
 
 
 @check_images
-def test_combined_chromatogram_median_areas(hymax_project):
+def test_combined_chromatogram_median_areas(hymax_project: Project):
 
 	fig = plt.figure(layout="constrained", figsize=(11.7, 8.3))
 	ax = fig.subplots(1, 1, sharex=True)
@@ -85,7 +86,7 @@ def test_combined_chromatogram_median_areas(hymax_project):
 
 
 @check_images
-def test_combined_chromatogram_median_height(hymax_project):
+def test_combined_chromatogram_median_height(hymax_project: Project):
 
 	fig = plt.figure(layout="constrained", figsize=(11.7, 8.3))
 	ax = fig.subplots(1, 1, sharex=True)
@@ -103,7 +104,7 @@ def test_combined_chromatogram_median_height(hymax_project):
 
 
 @check_images
-def test_combined_chromatogram_mean_height(hymax_project):
+def test_combined_chromatogram_mean_height(hymax_project: Project):
 
 	fig = plt.figure(layout="constrained", figsize=(11.7, 8.3))
 	ax = fig.subplots(1, 1, sharex=True)

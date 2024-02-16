@@ -1,7 +1,8 @@
 # 3rd party
 import pytest
 from common import check_images
-from matplotlib import pyplot as plt
+from libgunshotmatch.project import Project
+from matplotlib import pyplot as plt  # type: ignore[import]
 
 # this package
 from libgunshotmatch_mpl.peakviewer import draw_peaks, load_project
@@ -13,7 +14,7 @@ def test_load_project():
 
 @pytest.mark.parametrize("peak_idx", range(76))
 @check_images
-def test_draw_peaks(hymax_project, peak_idx: int):
+def test_draw_peaks(hymax_project: Project, peak_idx: int):
 
 	figure = plt.figure(figsize=(10.5, 5), layout="constrained")
 	axes = figure.subplots(
