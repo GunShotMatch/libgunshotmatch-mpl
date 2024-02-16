@@ -49,8 +49,8 @@ __all__ = (
 		"draw_peak_arrows",
 		"draw_peak_vlines",
 		"ylabel_sci_1dp",
-		"ylabel_use_sci"
-		"annotate_peaks"
+		"ylabel_use_sci",
+		"annotate_peaks",
 		)
 
 
