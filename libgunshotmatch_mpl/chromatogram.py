@@ -27,25 +27,25 @@ Common chromatogram drawing functionality.
 #
 
 # stdlib
-from operator import attrgetter, itemgetter
+from operator import itemgetter
 from typing import List, Optional, Union
 
 # 3rd party
 import matplotlib.transforms  # type: ignore[import]
-import numpy
 import textalloc  # type: ignore[import]
 from libgunshotmatch.project import Project
-from libgunshotmatch.utils import get_rt_range
 from matplotlib.axes import Axes  # type: ignore[import]
-from matplotlib.container import BarContainer  # type: ignore[import]
 from matplotlib.figure import Figure  # type: ignore[import]
 from matplotlib.ticker import AutoMinorLocator, ScalarFormatter  # type: ignore[import]
+
+# this package
+from libgunshotmatch_mpl.combined_chromatogram import (  # noqa: F401
+		draw_combined_chromatogram as draw_combined_chromatogram)
 
 __all__ = (
 		"OneDPScalarFormatter",
 		"add_repeat_name",
 		"draw_chromatograms",
-		"draw_combined_chromatogram",
 		"draw_peak_arrows",
 		"draw_peak_vlines",
 		"ylabel_sci_1dp",
@@ -205,91 +205,6 @@ def draw_chromatograms(project: Project, figure: Figure, axes: List[Axes]) -> No
 
 	figure.supylabel("Intensity", fontsize="medium")
 	axes[-1].set_xlabel("Retention Time (mins)")
-	figure.suptitle(project.name)
-
-
-def draw_combined_chromatogram(
-		project: Project,
-		figure: Figure,
-		ax: Axes,
-		*,
-		top_n_peaks: Optional[int] = None,
-		minimum_area: float = 0,
-		use_median: bool = False,
-		use_peak_height: bool = False,
-		show_points: bool = False,
-		) -> None:
-	"""
-	Draw a combined "chromatogram" for the project.
-
-	:param project:
-	:param figure:
-	:param ax:
-	:param top_n_peaks: Show only the n largest peaks.
-	:param minimum_area: Show only peaks larger than the given area.
-	:param use_median: Show the median and inter-quartile range, rather than the mean and standard deviation.
-	:param use_peak_height: Show the peak height and not the peak area.
-	:param show_points: Show individual retention time / peak area scatter points.
-
-	:rtype:
-
-	.. versionadded:: 0.2.0
-	.. versionchanged:: 0.4.0  Added the ``use_median``, ``use_peak_height`` and ``show_points`` keyword arguments.
-	"""
-
-	assert project.consolidated_peaks is not None
-
-	min_rt, max_rt = get_rt_range(project)
-
-	peaks = project.consolidated_peaks
-
-	if top_n_peaks:
-		# Sort by peak area and take largest ``top_n_peaks``
-		peaks = sorted(project.consolidated_peaks, key=attrgetter("area"), reverse=True)[:top_n_peaks]
-
-		# Resort by retention time
-		peaks.sort(key=attrgetter("rt"))
-
-	for peak in peaks:
-		if peak.area < minimum_area:
-			continue
-
-		rt = peak.rt / 60
-
-		if use_peak_height:
-			areas = [sum(ms.intensity_list) for ms in peak.ms_list]
-		else:
-			areas = peak.area_list
-
-		if use_median:
-			area = numpy.nanmedian(areas)
-			_25th_percentile = numpy.nanpercentile(areas, 25)
-			_75th_percentile = numpy.nanpercentile(areas, 75)
-			errorbar = [[area - _25th_percentile], [_75th_percentile - area]]
-		else:
-			area = numpy.nanmean(areas)
-			errorbar = numpy.nanstd(areas)
-
-		bar: BarContainer = ax.bar(rt, area, width=0.2)
-		if show_points:
-			bar_colour = bar.patches[0].get_facecolor()  # So they match
-			ax.scatter([rt / 60 for rt in peak.rt_list], areas, s=50, color=bar_colour, marker='x')
-
-		if len(peak) > 1:
-			errorbars = ax.errorbar(rt, area, yerr=errorbar, color="darkgrey", capsize=5, clip_on=False)
-
-			# for eb in errorbars[1]:
-			# 	eb.set_clip_on(False)
-
-	# ylabel_use_sci(ax)
-	ax.set_ylim(bottom=0)
-	ylabel_sci_1dp(ax)
-	figure.supylabel("Intensity", fontsize="medium")
-
-	ax.set_xlim(min_rt, max_rt)
-	ax.set_xlabel("Retention Time (mins)")
-	ax.xaxis.set_minor_locator(AutoMinorLocator())
-
 	figure.suptitle(project.name)
 
 
