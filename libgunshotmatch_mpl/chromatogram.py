@@ -39,8 +39,9 @@ from matplotlib.figure import Figure  # type: ignore[import]
 from matplotlib.ticker import AutoMinorLocator, ScalarFormatter  # type: ignore[import]
 
 # this package
-from libgunshotmatch_mpl.combined_chromatogram import (  # noqa: F401
-		draw_combined_chromatogram as draw_combined_chromatogram)
+import libgunshotmatch_mpl.combined_chromatogram
+
+draw_combined_chromatogram = libgunshotmatch_mpl.combined_chromatogram.draw_combined_chromatogram
 
 __all__ = (
 		"OneDPScalarFormatter",
