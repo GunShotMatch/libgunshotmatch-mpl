@@ -1,9 +1,12 @@
 # 3rd party
-from common import check_images
+import matplotlib  # type: ignore[import]
+import pytest
 from libgunshotmatch.project import Project
-from matplotlib import pyplot as plt  # type: ignore[import]
+from matplotlib import pyplot as plt
+from matplotlib.colors import Colormap  # type: ignore[import]
 
 # this package
+from common import check_images
 from libgunshotmatch_mpl.chromatogram import annotate_peaks, draw_combined_chromatogram
 
 
@@ -116,5 +119,28 @@ def test_combined_chromatogram_mean_height(hymax_project: Project):
 			ax,
 			top_n_peaks=40,
 			use_peak_height=True,
+			)
+	return fig
+
+
+@check_images
+@pytest.mark.parametrize(
+		"colourmap", [
+				pytest.param(matplotlib.cm.gist_ncar, id="gist_ncar"),
+				pytest.param(matplotlib.cm.prism, id="prism"),
+				]
+		)
+def test_combined_chromatogram_colourmap(hymax_project: Project, colourmap: Colormap):
+
+	fig = plt.figure(layout="constrained", figsize=(11.7, 8.3))
+	ax = fig.subplots(1, 1, sharex=True)
+	# print(min(peak.area for peak in project.consolidated_peaks))
+
+	draw_combined_chromatogram(
+			hymax_project,
+			fig,
+			ax,
+			top_n_peaks=40,
+			colourmap=colourmap,
 			)
 	return fig

@@ -32,7 +32,7 @@ A bar chart for peak area/height styled as a chromatogram, with time on the x-ax
 
 # stdlib
 from operator import attrgetter
-from typing import List, NamedTuple, Optional, Tuple, Union
+from typing import Callable, List, NamedTuple, Optional, Tuple, Type, Union
 
 # 3rd party
 import numpy
@@ -40,11 +40,20 @@ from libgunshotmatch.consolidate import ConsolidatedPeak
 from libgunshotmatch.project import Project
 from libgunshotmatch.utils import get_rt_range
 from matplotlib.axes import Axes  # type: ignore[import]
-from matplotlib.container import BarContainer  # type: ignore[import]
+from matplotlib.collections import PathCollection  # type: ignore[import]
+from matplotlib.colors import Colormap  # type: ignore[import]
+from matplotlib.container import BarContainer, ErrorbarContainer  # type: ignore[import]
 from matplotlib.figure import Figure  # type: ignore[import]
 from matplotlib.ticker import AutoMinorLocator  # type: ignore[import]
 
-__all__ = ("CCPeak", "draw_combined_chromatogram", "get_cc_peak", "get_combined_chromatogram_data")
+__all__ = (
+		"CCPeak",
+		"CominedChromatogram",
+		"draw_combined_chromatogram",
+		"get_cc_peak",
+		"get_combined_chromatogram_data",
+		"get_y_label"
+		)
 
 
 class CCPeak(NamedTuple):
@@ -138,6 +147,119 @@ def get_combined_chromatogram_data(
 	return peaks
 
 
+class CombinedChromatogram(NamedTuple):
+	"""
+	Settings and drawing function for a combined "chromatogram".
+	"""
+
+	#: The project name
+	name: str
+
+	#: X-axis (retention) time limits.
+	xlim: Tuple[float, float]
+
+	colourmap: Callable[[float], Optional[Tuple[int, int, int, int]]]
+	"""
+	Colourmap function for the bars, which calculates the bar colour from the retention time.
+
+	The function must return a tuple of RGBA values when given a float between 0 and 1.
+	"""
+
+	@classmethod
+	def from_project(
+			cls: Type["CombinedChromatogram"],
+			project: Project,
+			colourmap: Union[Colormap, Callable[[float], Tuple[int, int, int, int]], None] = None,
+			) -> "CombinedChromatogram":
+		"""
+		Alternative constructor from a :class:`libgunshotmatch.project.Project`.
+
+		:param project:
+		:param colourmap: Optional colourmap function for the bars.
+			By default sequential bars are given colours from the default colour cycle.
+			If ``colourmap`` is provided this function calculates the bar colour from the retention time.
+			The function must return a tuple of RGBA values when given a float between 0 and 1.
+		"""
+
+		name = project.name
+		xlim = get_rt_range(project)
+
+		if colourmap is None:
+			return cls(name, xlim, colourmap=lambda x: None)
+		else:
+			return cls(name, xlim, colourmap=colourmap)
+
+	def draw_peak(
+			self,
+			ax: Axes,
+			peak: CCPeak,
+			*,
+			show_points: bool = False,
+			) -> Tuple[BarContainer, Optional[PathCollection], Optional[ErrorbarContainer]]:
+		"""
+		Draw a peak on the given axes.
+
+		:param ax:
+		:param peak:
+		:param show_points: Show individual retention time / peak area scatter points.
+		"""
+
+		bar: BarContainer = ax.bar(
+				peak.rt,
+				peak.area_or_height,
+				width=0.2,
+				color=self.colourmap(peak.rt / self.xlim[1]),
+				)
+
+		if show_points:
+			bar_colour = bar.patches[0].get_facecolor()  # So they match
+			points = ax.scatter(
+					[rt / 60 for rt in peak.rt_list],
+					peak.area_or_height_list,
+					s=50,
+					color=bar_colour,
+					marker='x',
+					)
+		else:
+			points = None
+
+		if len(peak) > 1:
+			# Only show error bars if there's more than one datapoint
+			errorbars: ErrorbarContainer = ax.errorbar(
+					peak.rt,
+					peak.area_or_height,
+					yerr=peak.errorbar,
+					color="darkgrey",
+					capsize=5,
+					clip_on=False,
+					)
+
+			# for eb in errorbars[1]:
+			# 	eb.set_clip_on(False)
+		else:
+			errorbars = None
+
+		return bar, points, errorbars
+
+
+def get_y_label(use_median: bool = False, use_peak_height: bool = False) -> str:
+	"""
+	Returns the appropriate label for the y-axis.
+
+	:param use_median: Whether the combined chromatogram shows the median and inter-quartile range, rather than the mean and standard deviation.
+	:param use_peak_height: Whether the combined chromatogram shows the peak height and not the peak area.
+	"""
+
+	if use_peak_height and use_median:
+		return "Median Peak Height"
+	elif use_peak_height:
+		return "Mean Peak Height"
+	elif use_median:
+		return "Median Peak Area"
+	else:
+		return "Mean Peak Area"
+
+
 def draw_combined_chromatogram(
 		project: Project,
 		figure: Figure,
@@ -148,6 +270,7 @@ def draw_combined_chromatogram(
 		use_median: bool = False,
 		use_peak_height: bool = False,
 		show_points: bool = False,
+		colourmap: Union[Colormap, Callable[[float], Tuple[int, int, int, int]], None] = None
 		) -> None:
 	"""
 	Draw a combined "chromatogram" for the project.
@@ -162,6 +285,10 @@ def draw_combined_chromatogram(
 	:param use_median: Show the median and inter-quartile range, rather than the mean and standard deviation.
 	:param use_peak_height: Show the peak height and not the peak area.
 	:param show_points: Show individual retention time / peak area scatter points.
+	:param colourmap: Optional colourmap function for the bars.
+		By default sequential bars are given colours from the default colour cycle.
+		If ``colourmap`` is provided this function calculates the bar colour from the retention time.
+		The function must return a tuple of RGBA values when given a float between 0 and 1.
 
 	:rtype:
 
@@ -179,8 +306,6 @@ def draw_combined_chromatogram(
 
 	assert project.consolidated_peaks is not None
 
-	min_rt, max_rt = get_rt_range(project)
-
 	peaks = get_combined_chromatogram_data(
 			project,
 			top_n_peaks=top_n_peaks,
@@ -189,41 +314,17 @@ def draw_combined_chromatogram(
 			use_peak_height=use_peak_height,
 			)
 
+	cc = CombinedChromatogram.from_project(project, colourmap=colourmap)
+
 	for peak in peaks:
-
-		bar: BarContainer = ax.bar(peak.rt, peak.area_or_height, width=0.2)
-		if show_points:
-			bar_colour = bar.patches[0].get_facecolor()  # So they match
-			ax.scatter(
-					[rt / 60 for rt in peak.rt_list],
-					peak.area_or_height_list,
-					s=50,
-					color=bar_colour,
-					marker='x',
-					)
-
-		if len(peak) > 1:
-			errorbars = ax.errorbar(
-					peak.rt, peak.area_or_height, yerr=peak.errorbar, color="darkgrey", capsize=5, clip_on=False
-					)
-
-			# for eb in errorbars[1]:
-			# 	eb.set_clip_on(False)
+		cc.draw_peak(ax, peak, show_points=show_points)
 
 	# ylabel_use_sci(ax)
-	ax.set_ylim(bottom=0)
 	ylabel_sci_1dp(ax)
+	ax.set_ylim(bottom=0)
+	ax.set_ylabel(get_y_label(use_median, use_peak_height))
 
-	if use_peak_height and use_median:
-		ax.set_ylabel("Median Peak Height")
-	elif use_peak_height:
-		ax.set_ylabel("Mean Peak Height")
-	elif use_median:
-		ax.set_ylabel("Median Peak Area")
-	else:
-		ax.set_ylabel("Mean Peak Area")
-
-	ax.set_xlim(min_rt, max_rt)
+	ax.set_xlim(*cc.xlim)
 	ax.set_xlabel("Retention Time (mins)")
 	ax.xaxis.set_minor_locator(AutoMinorLocator())
 

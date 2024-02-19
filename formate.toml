@@ -42,8 +42,9 @@ known_third_party = [
     "numpy",
     "pytest",
     "pytest_cov",
+    "pytest_mpl",
     "pytest_randomly",
     "pytest_timeout",
     "textalloc",
 ]
-known_first_party = "libgunshotmatch_mpl"
+known_first_party = ["common", "libgunshotmatch_mpl"]

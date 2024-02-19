@@ -1,10 +1,10 @@
 # 3rd party
 import pytest
-from common import check_images
 from libgunshotmatch.project import Project
 from matplotlib import pyplot as plt  # type: ignore[import]
 
 # this package
+from common import check_images
 from libgunshotmatch_mpl.peakviewer import draw_peaks, load_project
 
 

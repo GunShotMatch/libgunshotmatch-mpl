@@ -1,9 +1,9 @@
 # 3rd party
-from common import check_images
 from libgunshotmatch.project import Project
 from matplotlib import pyplot as plt  # type: ignore[import]
 
 # this package
+from common import check_images
 from libgunshotmatch_mpl.chromatogram import draw_chromatograms
 
 

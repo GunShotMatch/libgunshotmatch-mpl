@@ -1,6 +1,8 @@
 {
   "test_chromarograms.test_draw_chromatograms": "28dc4441ee630ec3cdee96868da67b2dc3d31d5b5dcb617114bb35336d83cb0b",
   "test_combined_chromatogram.test_combined_chromatogram_annotate": "f3eab3a86e2489e4fe3145ce2a74813d7701178ac2f7996285b6eb054e583ede",
+  "test_combined_chromatogram.test_combined_chromatogram_colourmap[gist_ncar]": "c803f97d6524e4df436cd99b59368bf07cc2f77eb8ce3b4c4a8b32a709009ddf",
+  "test_combined_chromatogram.test_combined_chromatogram_colourmap[prism]": "db09cc2d44c12de6a41a876964fd24946c6854cdf149933e5276dad078661fdc",
   "test_combined_chromatogram.test_combined_chromatogram_mean_areas": "69edf4875f678056ffeac9f20131c9f55403b5280db941b1fd876ef75f4c3367",
   "test_combined_chromatogram.test_combined_chromatogram_mean_height": "158ce3660b7d6d19a5c880bcf5d8454dbd67145f3c7099a84dd7f50f0a79ff6d",
   "test_combined_chromatogram.test_combined_chromatogram_median_areas": "7e7b618274c44affc533494a06a6fa91a565e43f15b7083fb50650410534fb5a",
