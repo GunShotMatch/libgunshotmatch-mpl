@@ -137,12 +137,12 @@ Contents
 
 .. toctree::
 	:maxdepth: 3
-	:caption: API Reference
+	:caption: Submodules
 	:glob:
 
-	chromatogram<api/chromatogram>
-	combined_chromatogram<api/combined_chromatogram>
-	peakviewer<api/peakviewer>
+	``chromatogram``<api/chromatogram>
+	``combined_chromatogram``<api/combined_chromatogram>
+	``peakviewer``<api/peakviewer>
 
 .. toctree::
 	:maxdepth: 3

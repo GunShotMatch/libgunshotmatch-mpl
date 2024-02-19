@@ -56,6 +56,7 @@ github_ci_requirements:
 #  - pytest
 
 extra_sphinx_extensions:
+ - local_extension
  - sphinx_toolbox.more_autosummary.column_widths
 
 sphinx_conf_epilogue:
