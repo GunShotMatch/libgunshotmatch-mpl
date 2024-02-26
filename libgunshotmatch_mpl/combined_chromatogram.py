@@ -223,7 +223,7 @@ class CombinedChromatogram(NamedTuple):
 		else:
 			points = None
 
-		if len(peak) > 1:
+		if len(peak.rt_list) > 1:
 			# Only show error bars if there's more than one datapoint
 			errorbars: ErrorbarContainer = ax.errorbar(
 					peak.rt,
