@@ -144,3 +144,20 @@ def test_combined_chromatogram_colourmap(hymax_project: Project, colourmap: Colo
 			colourmap=colourmap,
 			)
 	return fig
+
+
+@check_images
+def test_combined_chromatogram_error_bars():
+	unknown = Project.from_file("tests/Eley Hymax 1.gsmp")
+
+	fig = plt.figure(layout="constrained", figsize=(11.7, 8.3))
+	ax = fig.subplots(1, 1, sharex=True)
+	# print(min(peak.area for peak in project.consolidated_peaks))
+
+	draw_combined_chromatogram(
+			unknown,
+			fig,
+			ax,
+			top_n_peaks=40,
+			)
+	return fig
