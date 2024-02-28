@@ -80,8 +80,8 @@ def draw_peaks(project: Project, peak_idx: int, figure: Figure, axes: List[Axes]
 	:param axes:
 	"""
 
-	min_rt = sys.maxsize
-	max_rt = 0
+	min_rt: float = sys.maxsize
+	max_rt: float = 0
 	for repeat_idx, (_, repeat) in enumerate(project.datafile_data.items()):
 		assert repeat.qualified_peaks is not None
 		peak = repeat.qualified_peaks[peak_idx]
