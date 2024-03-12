@@ -32,7 +32,7 @@ A bar chart for peak area/height styled as a chromatogram, with time on the x-ax
 
 # stdlib
 from operator import attrgetter
-from typing import Callable, List, NamedTuple, Optional, Tuple, Type, Union
+from typing import TYPE_CHECKING, Callable, List, NamedTuple, Optional, Tuple, Type, Union
 
 # 3rd party
 import numpy
@@ -45,6 +45,10 @@ from matplotlib.colors import Colormap  # type: ignore[import]
 from matplotlib.container import BarContainer, ErrorbarContainer  # type: ignore[import]
 from matplotlib.figure import Figure  # type: ignore[import]
 from matplotlib.ticker import AutoMinorLocator  # type: ignore[import]
+
+if TYPE_CHECKING:
+	# 3rd party
+	from pyms.Spectrum import MassSpectrum
 
 __all__ = (
 		"CCPeak",
@@ -82,7 +86,11 @@ def get_cc_peak(
 	"""
 
 	if use_peak_height:
-		areas = [sum(ms.intensity_list) for ms in peak.ms_list]
+		areas = []
+		ms: Optional["MassSpectrum"]
+		for ms in peak.ms_list:
+			assert ms is not None
+			areas.append(sum(ms.intensity_list))
 	else:
 		areas = peak.area_list
 
