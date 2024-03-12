@@ -47,4 +47,4 @@ known_third_party = [
     "pytest_timeout",
     "textalloc",
 ]
-known_first_party = ["common", "libgunshotmatch_mpl"]
+known_first_party = [ "common", "libgunshotmatch_mpl",]
