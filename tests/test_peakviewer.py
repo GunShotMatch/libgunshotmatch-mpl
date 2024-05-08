@@ -23,6 +23,6 @@ def test_draw_peaks(hymax_project: Project, peak_idx: int):
 			sharex=True,
 			)
 
-	draw_peaks(hymax_project, peak_idx, figure, axes)
+	draw_peaks(hymax_project, hymax_project.consolidated_peaks[peak_idx].rt_list, figure, axes)
 
 	return figure
