@@ -23,6 +23,7 @@ def test_draw_peaks(hymax_project: Project, peak_idx: int):
 			sharex=True,
 			)
 
+	assert hymax_project.consolidated_peaks is not None
 	draw_peaks(hymax_project, hymax_project.consolidated_peaks[peak_idx].rt_list, figure, axes)
 
 	return figure
