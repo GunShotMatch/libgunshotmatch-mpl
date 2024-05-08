@@ -27,10 +27,10 @@ Common peak drawing functionality.
 #
 
 # stdlib
-import sys
 from typing import List
 
 # 3rd party
+import numpy
 from domdf_python_tools.paths import PathLike
 from libgunshotmatch.project import Project
 from matplotlib.axes import Axes  # type: ignore[import]
@@ -70,29 +70,22 @@ def load_project(filename: PathLike) -> Project:
 	return project
 
 
-def draw_peaks(project: Project, peak_idx: int, figure: Figure, axes: List[Axes]) -> None:
+def draw_peaks(project: Project, retention_times: List[float], figure: Figure, axes: List[Axes]) -> None:
 	"""
-	Draw the peaks at ``peak_idx`` for each repeat in the project.
+	Draw the peaks at the given retention time for each repeat in the project.
 
 	:param project:
-	:param peak_idx:
+	:param retention_times: List of retention times for each repeat in the project.
 	:param figure:
 	:param axes:
+
+	.. versionchanged:: 0.6.0  Replaced ``peak_idx`` argument with ``retention_times``
 	"""
 
-	min_rt: float = sys.maxsize
-	max_rt: float = 0
-	for repeat_idx, (_, repeat) in enumerate(project.datafile_data.items()):
-		assert repeat.qualified_peaks is not None
-		peak = repeat.qualified_peaks[peak_idx]
-		# print(name, peak)
-
-		min_rt = min(min_rt, peak.rt - 20)
-		max_rt = max(max_rt, peak.rt + 20)
+	min_rt: float = numpy.nanmin(retention_times) - 20
+	max_rt: float = numpy.nanmax(retention_times) + 20
 
 	for repeat_idx, (_, repeat) in enumerate(project.datafile_data.items()):
-		assert repeat.qualified_peaks is not None
-		peak = repeat.qualified_peaks[peak_idx]
 		assert repeat.datafile.intensity_matrix is not None
 		im = repeat.datafile.intensity_matrix
 		tic = im.tic
@@ -106,12 +99,14 @@ def draw_peaks(project: Project, peak_idx: int, figure: Figure, axes: List[Axes]
 				intensity_list.append(intensity)
 
 		axes[repeat_idx].plot(time_list, intensity_list)
-		draw_peak_vlines(axes[repeat_idx], peak.rt / 60, intensity_list[time_list.index(peak.rt / 60)])
-		axes[repeat_idx].text(
-				peak.rt / 60,
-				axes[repeat_idx].get_ylim()[1] * 0.2,
-				f" {peak.rt/60:0.3f}",
-				)
+		peak_rt = retention_times[repeat_idx]
+		if not numpy.isnan(peak_rt):
+			draw_peak_vlines(axes[repeat_idx], peak_rt / 60, intensity_list[time_list.index(peak_rt / 60)])
+			axes[repeat_idx].text(
+					peak_rt / 60,
+					axes[repeat_idx].get_ylim()[1] * 0.2,
+					f" {peak_rt/60:0.3f}",
+					)
 	figure.supylabel("Intensity", fontsize="medium")
 	axes[0].autoscale()
 	axes[-1].set_xlabel("Retention Time (mins)")
