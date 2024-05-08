@@ -89,8 +89,8 @@ def get_cc_peak(
 		areas = []
 		ms: Optional["MassSpectrum"]
 		for ms in peak.ms_list:
-			assert ms is not None
-			areas.append(sum(ms.intensity_list))
+			if ms is not None:
+				areas.append(sum(ms.intensity_list))
 	else:
 		areas = peak.area_list
 
