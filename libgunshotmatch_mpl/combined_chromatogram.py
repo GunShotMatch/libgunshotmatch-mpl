@@ -309,6 +309,8 @@ def draw_combined_chromatogram(
 
 		* Moved to the :mod:`~.combined_chromatogram` module.
 		* Y-axis label now reflects ``use_median`` and ``use_peak_height`` options.
+
+	.. versionchanged:: 0.7.0  Added ``use_range`` keyword-only argument.
 	"""
 
 	# this package
