@@ -124,6 +124,17 @@ def test_combined_chromatogram_mean_height(hymax_project: Project):
 
 
 @check_images
+def test_combined_chromatogram_mean_range(hymax_project: Project):
+
+	fig = plt.figure(layout="constrained", figsize=(11.7, 8.3))
+	ax = fig.subplots(1, 1, sharex=True)
+	# print(min(peak.area for peak in project.consolidated_peaks))
+
+	draw_combined_chromatogram(hymax_project, fig, ax, top_n_peaks=40, use_range=True)
+	return fig
+
+
+@check_images
 @pytest.mark.parametrize(
 		"colourmap", [
 				pytest.param(matplotlib.cm.gist_ncar, id="gist_ncar"),

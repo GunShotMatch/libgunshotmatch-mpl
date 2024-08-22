@@ -277,6 +277,7 @@ def draw_combined_chromatogram(
 		minimum_area: float = 0,
 		use_median: bool = False,
 		use_peak_height: bool = False,
+		use_range: bool = False,
 		show_points: bool = False,
 		colourmap: Union[Colormap, Callable[[float], Tuple[int, int, int, int]], None] = None
 		) -> None:
@@ -292,6 +293,7 @@ def draw_combined_chromatogram(
 	:param minimum_area: Show only peaks larger than the given area (or peak height, as applicable).
 	:param use_median: Show the median and inter-quartile range, rather than the mean and standard deviation.
 	:param use_peak_height: Show the peak height and not the peak area.
+	:param use_range: Show the minimum and maximum values in error bar rather than stdev or IQR.
 	:param show_points: Show individual retention time / peak area scatter points.
 	:param colourmap: Optional colourmap function for the bars.
 		By default sequential bars are given colours from the default colour cycle.
@@ -325,6 +327,12 @@ def draw_combined_chromatogram(
 	cc = CombinedChromatogram.from_project(project, colourmap=colourmap)
 
 	for peak in peaks:
+		if use_range:
+			min_peak_area = min(peak.area_or_height_list)
+			max_peak_area = max(peak.area_or_height_list)
+			peak_area = peak.area_or_height
+			peak = peak._replace(errorbar=([peak_area - min_peak_area], [max_peak_area - peak_area]))
+
 		cc.draw_peak(ax, peak, show_points=show_points)
 
 	# ylabel_use_sci(ax)
