@@ -32,7 +32,7 @@ from typing import List, Optional, Union
 
 # 3rd party
 import matplotlib.transforms  # type: ignore[import]
-import textalloc  # type: ignore[import]
+import textalloc
 from libgunshotmatch.project import Project
 from matplotlib.axes import Axes  # type: ignore[import]
 from matplotlib.figure import Figure  # type: ignore[import]
