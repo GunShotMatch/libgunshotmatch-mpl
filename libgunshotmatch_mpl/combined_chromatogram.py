@@ -32,7 +32,7 @@ A bar chart for peak area/height styled as a chromatogram, with time on the x-ax
 
 # stdlib
 from operator import attrgetter
-from typing import TYPE_CHECKING, Callable, List, NamedTuple, Optional, Tuple, Type, Union
+from typing import TYPE_CHECKING, Callable, List, NamedTuple, Optional, Sequence, Tuple, Type, Union
 
 # 3rd party
 import numpy
@@ -117,6 +117,49 @@ def get_cc_peak(
 				)
 
 
+def get_combined_chromatogram_data_from_peaks(
+		consolidated_peaks: Sequence[Optional[ConsolidatedPeak]],
+		*,
+		top_n_peaks: Optional[int] = None,
+		threshold: float = 0,
+		use_median: bool = False,
+		use_peak_height: bool = False,
+		) -> List[CCPeak]:
+	"""
+	Returns data for a combined "chromatogram" for the project.
+
+	:param consolidated_peaks:
+	:param top_n_peaks: Show only the n largest peaks.
+	:param threshold: Show only peaks larger than the given area (or peak height, as applicable).
+	:param use_median: Show the median and inter-quartile range, rather than the mean and standard deviation.
+	:param use_peak_height: Show the peak height and not the peak area.
+	:param show_points: Show individual retention time / peak area scatter points.
+
+	:rtype:
+
+	.. versionadded:: 0.8.0
+	"""
+
+	peaks: List[CCPeak] = []
+	for peak in consolidated_peaks:
+		if peak is None:
+			continue
+
+		peak_data = get_cc_peak(peak, use_median, use_peak_height)
+		if peak_data.area_or_height < threshold:
+			continue
+		peaks.append(peak_data)
+
+	if top_n_peaks:
+		# Sort by peak area and take largest ``top_n_peaks``
+		peaks = sorted(peaks, key=attrgetter("area_or_height"), reverse=True)[:top_n_peaks]
+
+		# Resort by retention time
+		peaks.sort(key=attrgetter("rt"))
+
+	return peaks
+
+
 def get_combined_chromatogram_data(
 		project: Project,
 		*,
@@ -138,21 +181,13 @@ def get_combined_chromatogram_data(
 
 	assert project.consolidated_peaks is not None
 
-	peaks: List[CCPeak] = []
-	for peak in project.consolidated_peaks:
-		peak_data = get_cc_peak(peak, use_median, use_peak_height)
-		if peak_data.area_or_height < threshold:
-			continue
-		peaks.append(peak_data)
-
-	if top_n_peaks:
-		# Sort by peak area and take largest ``top_n_peaks``
-		peaks = sorted(peaks, key=attrgetter("area_or_height"), reverse=True)[:top_n_peaks]
-
-		# Resort by retention time
-		peaks.sort(key=attrgetter("rt"))
-
-	return peaks
+	return get_combined_chromatogram_data_from_peaks(
+			project.consolidated_peaks,
+			top_n_peaks=top_n_peaks,
+			threshold=threshold,
+			use_median=use_median,
+			use_peak_height=use_peak_height
+			)
 
 
 class CombinedChromatogram(NamedTuple):
