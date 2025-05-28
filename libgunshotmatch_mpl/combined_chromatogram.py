@@ -32,7 +32,7 @@ A bar chart for peak area/height styled as a chromatogram, with time on the x-ax
 
 # stdlib
 from operator import attrgetter
-from typing import TYPE_CHECKING, Callable, List, NamedTuple, Optional, Sequence, Tuple, Type, Union
+from typing import TYPE_CHECKING, Any, Callable, Dict, List, NamedTuple, Optional, Sequence, Tuple, Type, Union
 
 # 3rd party
 import numpy
@@ -238,6 +238,9 @@ class CombinedChromatogram(NamedTuple):
 			peak: CCPeak,
 			*,
 			show_points: bool = False,
+			bar_kwargs: Dict[str, Any] = {},
+			scatter_kwargs: Dict[str, Any] = {},
+			errorbar_kwargs: Dict[str, Any] = {},
 			) -> Tuple[BarContainer, Optional[PathCollection], Optional[ErrorbarContainer]]:
 		"""
 		Draw a peak on the given axes.
@@ -245,37 +248,52 @@ class CombinedChromatogram(NamedTuple):
 		:param ax:
 		:param peak:
 		:param show_points: Show individual retention time / peak area scatter points.
+
+		:rtype:
+
+		.. versionchanged:: 0.8.0
+
+			Added ``bar_kwargs``, ``scatter_kwargs`` and ``errorbar_kwargs`` options to allow
+			the bar, scatter points and errorbars to be customised.
 		"""
+
+		default_bar_kwargs = dict(
+				width=0.2,
+				color=self.colourmap(peak.rt / self.xlim[1]),
+				)
+		default_bar_kwargs.update(bar_kwargs)
 
 		bar: BarContainer = ax.bar(
 				peak.rt,
 				peak.area_or_height,
-				width=0.2,
-				color=self.colourmap(peak.rt / self.xlim[1]),
+				**default_bar_kwargs,
 				)
 
 		if show_points:
-			bar_colour = bar.patches[0].get_facecolor()  # So they match
+			default_scatter_kwargs = dict(
+					s=50,
+					color=bar.patches[0].get_facecolor(),  # So they match
+					marker='x',
+					)
+			default_scatter_kwargs.update(scatter_kwargs)
 			points = ax.scatter(
 					[rt / 60 for rt in peak.rt_list],
 					peak.area_or_height_list,
-					s=50,
-					color=bar_colour,
-					marker='x',
+					**default_scatter_kwargs,
 					)
 		else:
 			points = None
 
 		if len(peak.rt_list) > 1:
 			# Only show error bars if there's more than one datapoint
-			errorbars: ErrorbarContainer = ax.errorbar(
-					peak.rt,
-					peak.area_or_height,
+			default_errorbar_kwargs = dict(
 					yerr=peak.errorbar,
 					color="darkgrey",
 					capsize=5,
 					clip_on=False,
 					)
+			default_errorbar_kwargs.update(errorbar_kwargs)
+			errorbars: ErrorbarContainer = ax.errorbar(peak.rt, peak.area_or_height, **default_errorbar_kwargs)
 
 			# for eb in errorbars[1]:
 			# 	eb.set_clip_on(False)
