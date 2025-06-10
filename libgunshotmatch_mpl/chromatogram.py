@@ -31,12 +31,12 @@ from operator import itemgetter
 from typing import List, Optional, Union
 
 # 3rd party
-import matplotlib.transforms  # type: ignore[import]
+import matplotlib.transforms
 import textalloc
 from libgunshotmatch.project import Project
-from matplotlib.axes import Axes  # type: ignore[import]
-from matplotlib.figure import Figure  # type: ignore[import]
-from matplotlib.ticker import AutoMinorLocator, ScalarFormatter  # type: ignore[import]
+from matplotlib.axes import Axes
+from matplotlib.figure import Figure
+from matplotlib.ticker import AutoMinorLocator, ScalarFormatter
 
 # this package
 import libgunshotmatch_mpl.combined_chromatogram
@@ -142,6 +142,7 @@ def ylabel_sci_1dp(axes: Axes) -> None:
 
 	custom_formatter = OneDPScalarFormatter(useMathText=True)
 	axes.yaxis.set_major_formatter(custom_formatter)
+	assert isinstance(axes.yaxis.major.formatter, ScalarFormatter)
 	axes.yaxis.major.formatter.set_powerlimits((0, 0))
 
 
@@ -205,7 +206,7 @@ def draw_chromatograms(project: Project, figure: Figure, axes: List[Axes]) -> No
 		ax.set_xlim(times[0], times[-1])
 		ax.xaxis.set_tick_params(which="both", labelbottom=True)
 		# ax.set_ylim([0, ax.get_ylim()[1]*1.2])
-		ax.set_ylim([ax.get_ylim()[0] * 0.5, ax.get_ylim()[1] * 1.2])
+		ax.set_ylim((ax.get_ylim()[0] * 0.5, ax.get_ylim()[1] * 1.2))
 		ax.xaxis.set_minor_locator(AutoMinorLocator())
 		ylabel_use_sci(ax)
 		add_repeat_name(ax, repeat_name)

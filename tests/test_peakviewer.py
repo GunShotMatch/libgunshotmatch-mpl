@@ -1,7 +1,7 @@
 # 3rd party
 import pytest
 from libgunshotmatch.project import Project
-from matplotlib import pyplot as plt  # type: ignore[import]
+from matplotlib import pyplot as plt
 
 # this package
 from common import check_images

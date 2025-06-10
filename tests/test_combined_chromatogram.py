@@ -1,9 +1,9 @@
 # 3rd party
-import matplotlib  # type: ignore[import]
+import matplotlib
 import pytest
 from libgunshotmatch.project import Project
 from matplotlib import pyplot as plt
-from matplotlib.colors import Colormap  # type: ignore[import]
+from matplotlib.colors import Colormap
 
 # this package
 from common import check_images
@@ -136,9 +136,10 @@ def test_combined_chromatogram_mean_range(hymax_project: Project):
 
 @check_images
 @pytest.mark.parametrize(
-		"colourmap", [
-				pytest.param(matplotlib.cm.gist_ncar, id="gist_ncar"),
-				pytest.param(matplotlib.cm.prism, id="prism"),
+		"colourmap",
+		[
+				pytest.param(matplotlib.colormaps["gist_ncar"], id="gist_ncar"),
+				pytest.param(matplotlib.colormaps["prism"], id="prism"),
 				]
 		)
 def test_combined_chromatogram_colourmap(hymax_project: Project, colourmap: Colormap):

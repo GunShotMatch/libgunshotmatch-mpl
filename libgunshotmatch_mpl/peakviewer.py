@@ -33,8 +33,8 @@ from typing import List
 import numpy
 from domdf_python_tools.paths import PathLike
 from libgunshotmatch.project import Project
-from matplotlib.axes import Axes  # type: ignore[import]
-from matplotlib.figure import Figure  # type: ignore[import]
+from matplotlib.axes import Axes
+from matplotlib.figure import Figure
 
 # this package
 from libgunshotmatch_mpl.chromatogram import draw_peak_vlines

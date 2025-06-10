@@ -32,19 +32,32 @@ A bar chart for peak area/height styled as a chromatogram, with time on the x-ax
 
 # stdlib
 from operator import attrgetter
-from typing import TYPE_CHECKING, Any, Callable, Dict, List, NamedTuple, Optional, Sequence, Tuple, Type, Union
+from typing import (
+		TYPE_CHECKING,
+		Any,
+		Callable,
+		Dict,
+		List,
+		NamedTuple,
+		Optional,
+		Sequence,
+		Tuple,
+		Type,
+		Union,
+		cast
+		)
 
 # 3rd party
 import numpy
 from libgunshotmatch.consolidate import ConsolidatedPeak
 from libgunshotmatch.project import Project
 from libgunshotmatch.utils import get_rt_range
-from matplotlib.axes import Axes  # type: ignore[import]
-from matplotlib.collections import PathCollection  # type: ignore[import]
-from matplotlib.colors import Colormap  # type: ignore[import]
-from matplotlib.container import BarContainer, ErrorbarContainer  # type: ignore[import]
-from matplotlib.figure import Figure  # type: ignore[import]
-from matplotlib.ticker import AutoMinorLocator  # type: ignore[import]
+from matplotlib.axes import Axes
+from matplotlib.collections import PathCollection
+from matplotlib.colors import Colormap
+from matplotlib.container import BarContainer, ErrorbarContainer
+from matplotlib.figure import Figure
+from matplotlib.ticker import AutoMinorLocator
 
 if TYPE_CHECKING:
 	# 3rd party
@@ -212,7 +225,7 @@ class CombinedChromatogram(NamedTuple):
 	def from_project(
 			cls: Type["CombinedChromatogram"],
 			project: Project,
-			colourmap: Union[Colormap, Callable[[float], Tuple[int, int, int, int]], None] = None,
+			colourmap: Union[Colormap, Callable[[float], Optional[Tuple[int, int, int, int]]], None] = None,
 			) -> "CombinedChromatogram":
 		"""
 		Alternative constructor from a :class:`libgunshotmatch.project.Project`.
@@ -230,7 +243,12 @@ class CombinedChromatogram(NamedTuple):
 		if colourmap is None:
 			return cls(name, xlim, colourmap=lambda x: None)
 		else:
-			return cls(name, xlim, colourmap=colourmap)
+
+			return cls(
+					name,
+					xlim,
+					colourmap=cast(Callable[[float], Optional[Tuple[int, int, int, int]]], colourmap),
+					)
 
 	def draw_peak(
 			self,
@@ -257,7 +275,7 @@ class CombinedChromatogram(NamedTuple):
 			the bar, scatter points and errorbars to be customised.
 		"""
 
-		default_bar_kwargs = dict(
+		default_bar_kwargs: Dict[str, Any] = dict(
 				width=0.2,
 				color=self.colourmap(peak.rt / self.xlim[1]),
 				)
@@ -270,7 +288,7 @@ class CombinedChromatogram(NamedTuple):
 				)
 
 		if show_points:
-			default_scatter_kwargs = dict(
+			default_scatter_kwargs: Dict[str, Any] = dict(
 					s=50,
 					color=bar.patches[0].get_facecolor(),  # So they match
 					marker='x',
@@ -286,7 +304,7 @@ class CombinedChromatogram(NamedTuple):
 
 		if len(peak.rt_list) > 1:
 			# Only show error bars if there's more than one datapoint
-			default_errorbar_kwargs = dict(
+			default_errorbar_kwargs: Dict[str, Any] = dict(
 					yerr=peak.errorbar,
 					color="darkgrey",
 					capsize=5,
@@ -297,10 +315,10 @@ class CombinedChromatogram(NamedTuple):
 
 			# for eb in errorbars[1]:
 			# 	eb.set_clip_on(False)
-		else:
-			errorbars = None
+			return bar, points, errorbars
 
-		return bar, points, errorbars
+		else:
+			return bar, points, None
 
 
 def get_y_label(use_median: bool = False, use_peak_height: bool = False) -> str:
