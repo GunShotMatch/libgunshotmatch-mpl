@@ -99,11 +99,11 @@ libgunshotmatch-mpl
 	:target: https://github.com/GunShotMatch/libgunshotmatch-mpl/commit/master
 	:alt: GitHub last commit
 
-.. |maintained| image:: https://img.shields.io/maintenance/yes/2025
+.. |maintained| image:: https://img.shields.io/maintenance/yes/2026
 	:alt: Maintenance
 
 .. |pypi-downloads| image:: https://img.shields.io/pypi/dm/libgunshotmatch-mpl
-	:target: https://pypi.org/project/libgunshotmatch-mpl/
+	:target: https://pypistats.org/packages/libgunshotmatch-mpl
 	:alt: PyPI - Downloads
 
 .. end shields
