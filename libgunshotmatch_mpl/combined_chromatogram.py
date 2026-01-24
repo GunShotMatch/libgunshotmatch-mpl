@@ -69,7 +69,7 @@ __all__ = (
 		"draw_combined_chromatogram",
 		"get_cc_peak",
 		"get_combined_chromatogram_data",
-		"get_y_label"
+		"get_y_label",
 		)
 
 
@@ -146,7 +146,6 @@ def get_combined_chromatogram_data_from_peaks(
 	:param threshold: Show only peaks larger than the given area (or peak height, as applicable).
 	:param use_median: Show the median and inter-quartile range, rather than the mean and standard deviation.
 	:param use_peak_height: Show the peak height and not the peak area.
-	:param show_points: Show individual retention time / peak area scatter points.
 
 	:rtype:
 
@@ -189,7 +188,6 @@ def get_combined_chromatogram_data(
 	:param threshold: Show only peaks larger than the given area (or peak height, as applicable).
 	:param use_median: Show the median and inter-quartile range, rather than the mean and standard deviation.
 	:param use_peak_height: Show the peak height and not the peak area.
-	:param show_points: Show individual retention time / peak area scatter points.
 	"""
 
 	assert project.consolidated_peaks is not None
@@ -199,7 +197,7 @@ def get_combined_chromatogram_data(
 			top_n_peaks=top_n_peaks,
 			threshold=threshold,
 			use_median=use_median,
-			use_peak_height=use_peak_height
+			use_peak_height=use_peak_height,
 			)
 
 
@@ -266,6 +264,9 @@ class CombinedChromatogram(NamedTuple):
 		:param ax:
 		:param peak:
 		:param show_points: Show individual retention time / peak area scatter points.
+		:param bar_kwargs: Additional keyword arguments for the bar.
+		:param scatter_kwargs: Additional keyword arguments for the scatter points.
+		:param errorbar_kwargs: Additional keyword arguments for the errorbars.
 
 		:rtype:
 
@@ -350,7 +351,7 @@ def draw_combined_chromatogram(
 		use_peak_height: bool = False,
 		use_range: bool = False,
 		show_points: bool = False,
-		colourmap: Union[Colormap, Callable[[float], Tuple[int, int, int, int]], None] = None
+		colourmap: Union[Colormap, Callable[[float], Tuple[int, int, int, int]], None] = None,
 		) -> None:
 	"""
 	Draw a combined "chromatogram" for the project.

@@ -51,7 +51,7 @@ def resolve(
 		maxdepth: int = 0,
 		titles_only: bool = False,
 		collapse: bool = False,
-		includehidden: bool = False
+		includehidden: bool = False,
 		) -> Element:
 	"""Resolve a *toctree* node into individual bullet lists with titles
 	as items, returning None (if no containing titles are found) or
@@ -121,7 +121,7 @@ def resolve(
 			toctreenode: addnodes.toctree,
 			parents: List[str],
 			separate: bool = False,
-			subtree: bool = False
+			subtree: bool = False,
 			) -> List[Element]:
 		"""Return TOC entries for a toctree node."""
 		refs = [(e[0], e[1]) for e in toctreenode["entries"]]
@@ -133,7 +133,12 @@ def resolve(
 					if title is None:
 						title = ref
 					reference = nodes.reference(
-							'', '', internal=False, refuri=ref, anchorname='', *[nodes.Text(title)]
+							'',
+							'',
+							internal=False,
+							refuri=ref,
+							anchorname='',
+							*[nodes.Text(title)],
 							)
 					para = addnodes.compact_paragraph('', '', reference)
 					item = nodes.list_item('', para)
@@ -145,7 +150,12 @@ def resolve(
 					if not title:
 						title = clean_astext(self.env.titles[ref])
 					reference = nodes.reference(
-							'', '', internal=True, refuri=ref, anchorname='', *[nodes.Text(title)]
+							'',
+							'',
+							internal=True,
+							refuri=ref,
+							anchorname='',
+							*[nodes.Text(title)],
 							)
 					para = addnodes.compact_paragraph('', '', reference)
 					item = nodes.list_item('', para)
@@ -155,12 +165,12 @@ def resolve(
 					if ref in parents:
 						logger.warning(
 								__('circular toctree references '
-									'detected, ignoring: %s <- %s'),
+									'detected, ignoring: %s <- %s', ),
 								ref,
 								" <- ".join(parents),
 								location=ref,
 								type="toc",
-								subtype="circular"
+								subtype="circular",
 								)
 						continue
 					refdoc = ref
@@ -185,10 +195,10 @@ def resolve(
 					logger.warning(
 							__(
 									'toctree contains reference to document %r that '
-									'doesn\'t have a title: no link will be generated'
+									'doesn\'t have a title: no link will be generated',
 									),
 							ref,
-							location=toctreenode
+							location=toctreenode,
 							)
 			except KeyError:
 				# this is raised if the included file does not exist
@@ -215,7 +225,7 @@ def resolve(
 						if len(toplevel) > 1:
 							subtrees = toplevel.traverse(addnodes.toctree)
 							if subtrees:
-								toplevel[1][:] = subtrees  # type: ignore
+								toplevel[1][:] = subtrees
 							else:
 								toplevel.pop(1)
 				# resolve all sub-toctrees
@@ -259,8 +269,8 @@ def resolve(
 		caption_node.rawsource = toctree["rawcaption"]
 		if hasattr(toctree, "uid"):
 			# move uid to caption_node to translate it
-			caption_node.uid = toctree.uid  # type: ignore
-			del toctree.uid  # type: ignore
+			caption_node.uid = toctree.uid
+			del toctree.uid
 		newnode += caption_node
 	newnode.extend(tocentries)
 	newnode["toctree"] = True

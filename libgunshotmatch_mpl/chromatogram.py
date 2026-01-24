@@ -70,6 +70,7 @@ def draw_peak_arrows(
 	:param axes:
 	:param rt: Retention time in minutes.
 	:param intensity: Peak apex height.
+	:param colour: Arrow colour.
 	"""
 
 	trans_offset = matplotlib.transforms.offset_copy(
@@ -103,6 +104,7 @@ def draw_peak_vlines(
 	:param axes:
 	:param rt: Retention time in minutes.
 	:param intensity: Peak apex height.
+	:param colour: Line colour.
 	"""
 
 	axes.vlines(rt, 0, intensity, colors=colour)

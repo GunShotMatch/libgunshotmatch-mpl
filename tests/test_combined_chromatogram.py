@@ -140,7 +140,7 @@ def test_combined_chromatogram_mean_range(hymax_project: Project):
 		[
 				pytest.param(matplotlib.colormaps["gist_ncar"], id="gist_ncar"),
 				pytest.param(matplotlib.colormaps["prism"], id="prism"),
-				]
+				],
 		)
 def test_combined_chromatogram_colourmap(hymax_project: Project, colourmap: Colormap):
 
