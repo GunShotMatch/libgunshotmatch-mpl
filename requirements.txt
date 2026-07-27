@@ -3,3 +3,4 @@ libgunshotmatch>=0.7.0
 matplotlib>=3.7.2
 numpy>=1.24.4
 textalloc>=0.0.9
+tqdm<4.68.4
